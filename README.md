@@ -100,19 +100,13 @@ cd tianci-framework
 
 运行环境治理引擎
 
-
-
 python tianci\_HJZL.py
-
-
 
 推演欧盟碳边境调节机制（CBAM）落地场景，输出气候敏感度、碳税减排效果、PM2.5改善量、总磷下降幅度、海洋pH修复效果。
 
 
 
 运行危情推演引擎
-
-
 
 python tianci\_JZKZ.py
 
@@ -134,13 +128,13 @@ python tianci\_JZKZ.py
 
 
 
+运行全息经济学引擎
+
 python tianci\_HGJJ.py
 
 
 
 白盒验证
-
-
 
 天赐范式的核心承诺：任何人都可以复现我们的结果。
 
@@ -162,75 +156,75 @@ python tianci\_HGJJ.py
 
 
 
-\## 代码文件说明
+代码文件说明
+
+文件名	领域	核心算子方法	推演场景
+
+tianci\_HJZL.py	环境治理	Ξ\_anchor\_deviation, Θ\_trace\_emissions, GTR\_climate\_sensitivity, Λ\_deviation\_warning, τ\_carbon\_tax\_intervention, Σ\_uncertainty\_calc, EBF\_butterfly\_effect, ℋ\_holo耦合	CBAM 碳边境调节、燃煤+机动车排放、大气沉降→水质、海洋酸化
+
+tianci\_JZKZ.py	全灾种应急	Ξ\_anchor\_deviation, Θ\_damage\_trace, GTR\_aftershock\_risk, τ\_search\_rescue, τ\_flood\_diversion, τ\_lockdown\_intervention, Σ\_uncertainty\_calc, EBF\_butterfly\_effect, ℋ\_holo耦合	定日地震、华北洪水、复合巨灾
+
+tianci\_HGJJ.py	全息经济学	全息效用函数、降权均衡、Φ(Policy)约束	经济-环境协同推演
+
+输出效果
+
+每个引擎运行后会自动生成 6 图联动可视化报告，包括：
 
 
 
-| 文件名 | 领域 | 核心算子方法 | 推演场景 |
-
-|--------|------|--------------|----------|
-
-| `tianci\_HJZL.py` | 环境治理 | Ξ\_anchor\_deviation, Θ\_trace\_emissions, GTR\_climate\_sensitivity, Λ\_deviation\_warning, τ\_carbon\_tax\_intervention, Σ\_uncertainty\_calc, EBF\_butterfly\_effect, ℋ\_holo耦合 | CBAM 碳边境调节、燃煤+机动车排放、大气沉降→水质、海洋酸化 |
-
-| `tianci\_JZKZ.py` | 全灾种应急 | Ξ\_anchor\_deviation, Θ\_damage\_trace, GTR\_aftershock\_risk, τ\_search\_rescue, τ\_flood\_diversion, τ\_lockdown\_intervention, Σ\_uncertainty\_calc, EBF\_butterfly\_effect, ℋ\_holo耦合 | 定日地震、华北洪水、复合巨灾 |
-
-| `tianci\_HGJJ.py` | 全息经济学 | 全息效用函数、降权均衡、Φ(Policy)约束 | 经济-环境协同推演 |
+各模块 Σ 不确定性对比
 
 
 
-\## 输出效果
+源解析饼图（排放/倒塌成因/传播途径）
 
 
 
-每个引擎运行后会自动生成 \*\*6 图联动可视化报告\*\*，包括：
+关键风险驱动因子对比
 
 
 
-\*   各模块 Σ 不确定性对比
-
-\*   源解析饼图（排放/倒塌成因/传播途径）
-
-\*   关键风险驱动因子对比
-
-\*   干预措施效果对比
-
-\*   ZFC/¬CH 模式切换历史
-
-\*   全系统耦合风险指数
+干预措施效果对比
 
 
 
-\## 版权与引用
+ZFC/¬CH 模式切换历史
 
 
 
-本文及所附代码遵循 \*\*CC BY-SA 4.0\*\* 开源协议。学术研究、个人学习及非商业用途可自由使用；商业应用须另行获取授权。
+全系统耦合风险指数
 
 
 
-\*\*建议引用格式：\*\*  
+版权与引用
 
-天赐范式. (2026). \*天赐范式·算子流统一白盒框架\* \[Python代码]. Gitee. https://gitee.com/windsnowmichael/tianci-framework
-
-
-
-\## 联系方式
+本文及所附代码遵循 CC BY-SA 4.0 开源协议。学术研究、个人学习及非商业用途可自由使用；商业应用须另行获取授权。
 
 
 
-\*   \*\*CSDN 博客\*\*：\[天赐范式](https://blog.csdn.net/snowoftheworld)
+建议引用格式：
 
-\*   \*\*Gitee 主页\*\*：\[windsnowmichael](https://gitee.com/windsnowmichael)
-
-\*   \*\*独有分子验证悬赏令\*\*：详见 CSDN 天赐范式专栏
+天赐范式. (2026). 天赐范式·算子流统一白盒框架 \[Python代码]. Gitee. https://gitee.com/windsnowmichael/tianci-framework
 
 
 
-\## 致谢
+联系方式
+
+CSDN 博客：天赐范式
 
 
 
-感谢所有愿意仔细审视这套白盒体系的同行者。  
+Gitee 主页：windsnowmichael
 
-\*\*算子即一切，一切即算子。\*\*
+
+
+独有分子验证悬赏令：详见 CSDN 天赐范式专栏
+
+
+
+致谢
+
+感谢所有愿意仔细审视这套白盒体系的同行者。
+
+算子即一切，一切即算子。
 
