@@ -6,14 +6,6 @@ on:
         description: '雷诺数'
         required: false
         default: '1000'
-name: NS方程并行求解
-on:
-  workflow_dispatch:
-    inputs:
-      reynolds:
-        description: '雷诺数'
-        required: false
-        default: '1000'
 jobs:
   solve:
     runs-on: ubuntu-latest
