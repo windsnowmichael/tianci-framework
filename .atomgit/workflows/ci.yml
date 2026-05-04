@@ -1,0 +1,11 @@
+name: 天赐范式自动推演验证
+on: [push]
+jobs:
+  test-paradigm-engines:
+    runs-on: atomgit-cpu
+    steps:
+      - uses: actions/checkout@v3
+      - name: 安装依赖
+        run: pip install numpy matplotlib scipy
+      - name: 运行全链路验证
+        run: python run_all_tests.py
