@@ -6,11 +6,20 @@ on:
         description: '雷诺数'
         required: false
         default: '1000'
+name: NS方程并行求解
+on:
+  workflow_dispatch:
+    inputs:
+      reynolds:
+        description: '雷诺数'
+        required: false
+        default: '1000'
 jobs:
   solve:
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 350
     strategy:
+      fail-fast: false
       matrix:
         grid_size: [64, 128, 256]
     steps:
@@ -23,7 +32,8 @@ jobs:
         run: pip install numpy scipy matplotlib
       - name: 运行NS方程求解
         run: python ns_solver.py --grid-size ${{ matrix.grid_size }} --reynolds ${{ github.event.inputs.reynolds }}
-      - name: 上传计算结果
+      - name: 强制上传计算结果（无论死活）
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ns-results-grid-${{ matrix.grid_size }}
