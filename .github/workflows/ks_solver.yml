@@ -31,7 +31,7 @@ jobs:
         run: python ks_solver.py --init-density ${{ matrix.init_density }} --grid-size ${{ github.event.inputs.grid_size }}
       
       - name: 上传计算结果
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ks-results-density-${{ matrix.init_density }}
           path: output/
