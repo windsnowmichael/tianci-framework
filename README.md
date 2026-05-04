@@ -133,6 +133,20 @@ python tianci\_JZKZ.py
 python tianci\_HGJJ.py
 
 
+## 自动化验证
+
+本项目已配置 **Gitee Go** 自动推演验证流水线。每次提交代码，系统将自动运行核心算子测试。
+
+您也可以在本地运行以下命令来验证所有功能模块：
+
+```bash
+# 安装依赖
+pip install -r requirements.txt
+# 运行全链路基础验证
+python run_all_tests.py
+# 启动算子流API并验证
+python mcp_server.py &
+curl http://localhost:8080/health
 
 白盒验证
 
