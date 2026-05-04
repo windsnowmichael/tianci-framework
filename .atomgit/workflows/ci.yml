@@ -5,7 +5,12 @@ jobs:
     runs-on: atomgit-cpu
     steps:
       - uses: actions/checkout@v3
-      - name: 安装依赖
-        run: pip install numpy matplotlib scipy
-      - name: 运行全链路验证
+      - name: 安装基础依赖
+        run: pip install numpy matplotlib scipy flask
+      - name: 运行全链路基础验证
         run: python run_all_tests.py
+      - name: 启动算子流API并验证
+        run: |
+          python mcp_server.py &
+          sleep 5
+          curl http://localhost:8080/health
