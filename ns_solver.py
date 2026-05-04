@@ -103,14 +103,29 @@ def solve_cavity_tianci(N=128, Re=1000, dt0=0.0004, steps=20000):
         psi, omega = psi_new, omega_new
         if sigma < 0.3 and dt < original_dt:
             dt = min(original_dt, dt*1.005)
+                # 每2000步输出并保存中间结果
         if step % 2000 == 0:
+            # 1. 先保存 checkpoint
+            os.makedirs('output', exist_ok=True)
+            np.save(f'output/psi_{N}_step{step}.npy', psi)
+            np.save(f'output/omega_{N}_step{step}.npy', omega)
+            checkpoint = {
+                "step": step,
+                "main_vortex": (round(j/(N-1), 4), round(i/(N-1), 4)),
+                "sigma": float(sigma),
+                "energy": float(energy_now)
+            }
+            with open(f'output/checkpoint_{N}_step{step}.json', 'w') as cf:
+                json.dump(checkpoint, cf)
+            
+            # 2. 再进行屏幕输出（这部分保持原样）
             interior = psi[1:-1,1:-1]
             idx = np.argmin(interior)
             i,j = np.unravel_index(idx, interior.shape)
             i+=1; j+=1
-            xc, yc = j/(N-1), i/(N-1)
+            xc = j/(N-1); yc = i/(N-1)
+            energy_now = np.sum(omega**2)  # energy_now 需要在此处更新
             print(f"Step {step:6d}: Σ={sigma:.3f} dt={dt:.6f} 主涡≈({xc:.3f},{yc:.3f}) 能量={energy_now:.2e}")
-    return psi, omega, energy_history, sigma_history
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
