@@ -1,5 +1,7 @@
 \# 天赐范式 · tianci-framework
 
+[![天赐范式 CI](https://github.com/windsnowmichael/tianci-framework/actions/workflows/ci.yml/badge.svg)](https://github.com/windsnowmichael/tianci-framework/actions/workflows/ci.yml)
+
 
 
 \*\*算子即一切，一切即算子。\*\*
