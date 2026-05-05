@@ -26,6 +26,15 @@ jobs:
       - name: 运行全链路基础验证
         run: python run_all_tests.py
 
+      - name: 验证六个新原生算子
+        run: python test_new.py
+
+      - name: 验证黑洞熔化元分析
+        run: python test_black_hole.py
+
+      - name: 验证舒曼共振元分析
+        run: python test_schumann.py
+
       - name: 启动算子流API并验证
         run: |
           python mcp_server.py &
