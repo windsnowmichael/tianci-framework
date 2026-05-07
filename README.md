@@ -70,6 +70,23 @@ tianci-framework/
 ├── .github/workflows/      # CI/CD 自动验收流水线
 └── .gitignore              # 忽略规则
 
+## 仓库结构
+
+tianci-framework/
+├── tianci_HJZL.py          # 环境治理引擎
+├── tianci_JZKZ.py          # 全灾种危情推演引擎
+├── tianci_HGJJ.py          # 全息经济学引擎
+├── ns_cpp/                 # NS 方程 256×256 方腔流 C++ 解算器
+│   ├── tianci_opt.cpp      #   核心源码（含算子流监控体系）
+│   ├── verify_medal.py     #   0.996勋章验证脚本
+│   └── README.md           #   编译与复现指南
+├── wormhole/               # 天赐虫洞协议（Python 实现，可独立运行）
+│   └── tianci_wormhole.py
+├── README.md               # 本文件
+├── requirements.txt        # Python 依赖清单
+├── .github/workflows/      # CI/CD 自动验收流水线
+└── .gitignore              # 忽略规则
+
 
 \---
 
