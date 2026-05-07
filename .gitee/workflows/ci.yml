@@ -42,13 +42,19 @@ jobs:
           sleep 5
           curl http://localhost:8080/health
 
-      - name: 编译NS方程256方腔流引擎
-        working-directory: ns_cpp
-        run: g++ -std=c++17 -O3 -ffast-math -march=native tianci_opt.cpp -o tianci_opt
-
-      - name: 运行256方腔流仿真
-        working-directory: ns_cpp
-        run: ./tianci_opt
+            - name: 编译并运行NS方程256方腔流引擎
+        run: |
+          echo "当前目录:"
+          pwd
+          echo "ns_cpp目录内容:"
+          ls ns_cpp
+          echo "开始编译..."
+          cd ns_cpp
+          g++ -std=c++17 -O3 -ffast-math -march=native tianci_opt.cpp -o tianci_opt
+          echo "编译完成，开始运行..."
+          ./tianci_opt
+          echo "运行结束，检查生成文件:"
+          ls -l u_centerline.txt
 
       - name: 验证0.996勋章
         run: |
