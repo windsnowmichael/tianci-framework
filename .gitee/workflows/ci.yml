@@ -48,9 +48,8 @@ jobs:
           g++ -std=c++17 -O3 -ffast-math -march=native tianci_opt.cpp -o tianci_opt
 
       - name: 运行256方腔流仿真
-        run: |
-          cd ns_cpp
-          ./tianci_opt
+       working-directory: ns_cpp
+       run: ./tianci_opt
 
       - name: 验证0.996勋章
         run: |
