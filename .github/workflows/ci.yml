@@ -2,14 +2,15 @@ name: 天赐范式自动推演验证
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
 
 jobs:
   test-paradigm-engines:
     runs-on: ubuntu-latest
-
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
@@ -26,8 +27,47 @@ jobs:
       - name: 运行全链路基础验证
         run: python run_all_tests.py
 
+      - name: 验证六个新原生算子
+        run: python test_new.py
+
+      - name: 验证黑洞熔化元分析
+        run: python test_black_hole.py
+
+      - name: 验证舒曼共振元分析
+        run: python test_schumann.py
+
       - name: 启动算子流API并验证
         run: |
           python mcp_server.py &
           sleep 5
           curl http://localhost:8080/health
+
+      - name: 编译NS方程256方腔流引擎
+        run: |
+          g++ -std=c++17 -O3 -ffast-math -march=native tianci_opt.cpp -o tianci_opt
+
+      - name: 运行256方腔流仿真
+        run: ./tianci_opt
+
+      - name: 验证0.996勋章
+        run: |
+          python -c "
+          import numpy as np
+          from scipy.interpolate import interp1d
+
+          data = np.loadtxt('u_centerline.txt', skiprows=1)
+          y_my, u_my = data[:, 0], data[:, 1] * (1.0 / 255.0)
+
+          ghia_y = np.array([0.0, 0.0547, 0.0625, 0.0703, 0.1016, 0.1719, 0.2813, 0.4531, 0.5, 0.6172, 0.7344, 0.8516, 0.9531, 0.9609, 0.9688, 0.9766, 1.0])
+          ghia_u = np.array([0.0, -0.03717, -0.04192, -0.04775, -0.06434, -0.10150, -0.15662, -0.21090, -0.20581, -0.13641, 0.00332, 0.23151, 0.68717, 0.73722, 0.78871, 0.84123, 1.0])
+
+          f = interp1d(y_my, u_my, kind='cubic')
+          err = np.max(np.abs(f(ghia_y) - ghia_u))
+
+          MEDAL = 0.996078431372549
+          if abs(err - MEDAL) < 1e-12:
+              print(f'✅ 0.996勋章验证通过！{err}')
+          else:
+              print(f'❌ 勋章失准：{err}')
+              exit(1)
+          "
