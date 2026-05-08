@@ -229,8 +229,24 @@ ZFC/¬CH 模式切换历史
 
 👉 相关技术文章详见 CSDN 专栏 [天赐范式第33天-第34天续]。
 
+## 复现指南
 
+### 256×256 方腔流
+- 源码：`tianci_256.cpp`
+- 验证：`verify_256.py`
 
+### 257×257 方腔流
+- 源码：`tianci_257.cpp`
+- 验证：`verify_257.py`
+
+### 258×258 方腔流
+- 源码：`tianci_258.cpp`
+- 验证：`verify_258.py`
+
+编译命令（以257为例）：
+g++ tianci_257.cpp -o tianci_257 -O3 -ffast-math -march=native
+运行：./tianci_257
+验证：python verify_257.py
 
 版权与引用
 
