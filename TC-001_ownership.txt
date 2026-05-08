@@ -1,0 +1,6 @@
+分子命名：TC-001（Tianci Compound 001） 
+SMILES：CCOC1CCCCC1C1CCCCC1C 
+SHA-256：b3e0803aed782a8840df0ed2cec2dc2b24577e65841a0c3a4606076d07ac368b 
+发布时间戳：2026-05-08 
+发布平台：CSDN 天赐范式专栏 
+悬赏令编号：Tianci-Molecule-003 
