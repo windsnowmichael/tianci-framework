@@ -1,0 +1,6 @@
+分子编号：Tianci-Molecule-001 
+SMILES：CCCOc1ccccc1CCc1ccccc1CCCO 
+SHA-256：697a62b2f145243dda06dd32c975b975ba5678b888fd301224385c637f3dbc10 
+发布时间戳：2026-05-03 
+发布平台：CSDN 天赐范式专栏 
+悬赏令编号：Tianci-Molecule-001 
