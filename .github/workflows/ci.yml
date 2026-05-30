@@ -1,0 +1,71 @@
+name: 天赐范式自动推演验证
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test-paradigm-engines:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 安装依赖
+        run: |
+          pip install numpy matplotlib scipy flask
+
+      - name: 运行全链路基础验证
+        run: python run_all_tests.py
+
+      - name: 验证六个新原生算子
+        run: python test_new.py
+
+      - name: 验证黑洞熔化元分析
+        run: python test_black_hole.py
+
+      - name: 验证舒曼共振元分析
+        run: python test_schumann.py
+
+      - name: 启动算子流API并验证
+        run: |
+          python mcp_server.py &
+          sleep 5
+          curl http://localhost:8080/health
+
+      - name: 编译并运行256×256方腔流
+        run: |
+          g++ -std=c++17 -O3 -ffast-math -march=native tianci_256.cpp -o tianci_256
+          ./tianci_256
+
+      - name: 验证256×256勋章 (254/255)
+        run: python verify_256.py
+
+      - name: 编译并运行257×257方腔流
+        run: |
+          g++ -std=c++17 -O3 -ffast-math -march=native tianci_257.cpp -o tianci_257
+          ./tianci_257
+
+      - name: 验证257×257勋章 (255/256)
+        run: python verify_257.py
+
+      - name: 编译并运行258×258方腔流
+        run: |
+          g++ -std=c++17 -O3 -ffast-math -march=native tianci_258.cpp -o tianci_258
+          ./tianci_258
+
+      - name: 验证258×258勋章 (256/257)
+        run: python verify_258.py
+Run g++ -std=c++17 -O3 -ffast-math -march=native tianci_opt.cpp -o tianci_opt
+cc1plus: fatal error: tianci_opt.cpp: No such file or directory
+compilation terminated.
+Error: Process completed with exit code 1.
