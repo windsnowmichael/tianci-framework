@@ -1,5 +1,8 @@
 # tianci-paradigm（天赐范式）
 
+> **English version**: [`README.md`](README.md)（英文入口）。
+> 本文件为中文版说明，两者内容等价；`specs/`、`known-gaps.md`、`CHANGELOG.md` 仍为中文，暂无英译。
+
 **天赐范式（TianCi Paradigm）算子流技术特征的可 import 实现。**
 
 把第 102 / 115 / 124 / 152 / 188-190 天沉淀的算子流技术特征，从「只能读的文章」变成「能 import、能调用、能审计」的 Python 包。本包是第 190 天《反向方案 v1.0》对「载体错配」（AP-1）的解法落地。

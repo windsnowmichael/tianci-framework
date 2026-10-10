@@ -39,7 +39,12 @@ COVERAGE_OK = 19.5
 VERSION_OK = "0.2.0"
 
 # 否定/警示语：含这些词的行是在"禁止"虚报写法，不是虚报行为本身
-NEGATIVE_HINT = ("禁止", "不写", "不用", "不得", "严禁", "勿", "✗", "不要", "误报", "虚报")
+# 2026-10-10 修复：原表只有中文否定词，英文文档写 "Never 20% or higher" 会被误判为虚报
+# （检查器只认中文 = 语言偏私，与"勘误不偏私"冲突）。补入英文否定词。
+NEGATIVE_HINT = (
+    "禁止", "不写", "不用", "不得", "严禁", "勿", "✗", "不要", "误报", "虚报",
+    "never", "do not", "must not", "forbidden", "prohibited",
+)
 
 # E8：v0.2 必须命中的关键词（v0.1.0 归档基线里这些词为零）
 ACCEPT_KEYWORDS = ("TDP", "DRR", "存在性", "毒丸", "138")
@@ -61,7 +66,8 @@ def iter_md_files() -> list[str]:
 def check_coverage(lines: list[str], path: str) -> list[str]:
     problems = []
     for i, line in enumerate(lines, 1):
-        if any(hint in line for hint in NEGATIVE_HINT):
+        low = line.lower()   # 大小写无关：英文句首 "Never" 也要识别为否定语
+        if any(hint in low for hint in NEGATIVE_HINT):
             continue
         if "grep -rn" in line:
             continue

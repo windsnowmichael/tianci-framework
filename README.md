@@ -1,37 +1,70 @@
 # tianci-paradigm
 
-**天赐范式（TianCi Paradigm）算子流技术特征的可 import 实现。**
+**An importable implementation of the TianCi Paradigm (天赐范式) operator-stream technical signature.**
 
-把第 102 / 115 / 124 / 152 / 188-190 天沉淀的算子流技术特征，从「只能读的文章」变成「能 import、能调用、能审计」的 Python 包。本包是第 190 天《反向方案 v1.0》对「载体错配」（AP-1）的解法落地。
+Turns the operator-stream signature accumulated on Days 102 / 115 / 124 / 152 / 188–190 from
+"an article you can only read" into "a Python package you can import, call, and audit".
+This package is the concrete fix for **carrier mismatch (AP-1)**, as argued in Day 190
+*Reverse Plan v1.0*.
 
-## 仓库与单一真源
+> **Language note.** This file is the English entry point. The Chinese version is
+> [`README_CN.md`](README_CN.md). Everything under `specs/`, `known-gaps.md` and
+> `CHANGELOG.md` is **written in Chinese** and stays that way for now — the code
+> docstrings and specs are not translated. If you do not read Chinese, this README and
+> the source code are sufficient to install and call the package; consult the spec
+> documents with a translation tool.
 
-- **canonical（唯一真源）**：[https://github.com/windsnowmichael/tianci-framework](https://github.com/windsnowmichael/tianci-framework)
-- **镜像（mirror，非真源）**：AtomGit + 第三平台。镜像仅作分发副本，**所有提交、Issue、Release 以 canonical 为准**；三库平权 = 三个真源，明确禁止。
-- **沿革**：本包是第 31 天（2026-05-04）`tianci-framework` 仓库（19+ 原生算子）的**后继**。旧仓已标 `archived` 并指向本包；不留两个都能装的真源。
+## Repository and single source of truth
 
-## 特性
+- **Canonical**: <https://github.com/windsnowmichael/tianci-framework>
+- **Mirrors (distribution copies, NOT sources of truth)**:
+  - AtomGit: <https://atomgit.com/gcw_lwUf3sWj/tianci-framework>
+  - Gitee: <https://gitee.com/windsnowmichael/tianci-framework>
+- All commits, issues and releases are governed by the canonical repository. The mirrors
+  exist for distribution only. **"Three equal repositories" is explicitly rejected** —
+  that would be three competing sources of truth.
+- **Lineage**: this package succeeds the Day 31 (2026-05-04) `tianci-framework` repository
+  (19+ native operators). The old repository is archived and points here. Two installable
+  "sources of truth" are deliberately not maintained.
 
-- **算子契约五件套**：输入域 / 输出域 / 前置条件 / 后置保证 / 副作用，`Operator` dataclass 强制校验，缺一即知。
-- **算子注册表**：v7.0 文档 128 个算子全部登记，25 个有完整契约，覆盖率 **19.5%**（如实标注，不虚报）。
-- **九步推演协议**（第124天）：Θ→Ξ→Θ→Γ→Σ→Λ→τ→R→Ψ，阈值 0.3/0.6，捷径/连续3红/DAG 有环规则全部可执行。
-- **动态运行时七器官**（第152天）：Diode#96 / Φ门 / Amp#95 / R_Lagrange / Λ_Bombe / Meta#97 / Portrait#98，一次心跳一次完整处理。
-- **三域零绑定**：气象 / 金融 / 基因适配器，同一台机器吃三域数据；暖启动跨域迁移；Abel 对偶验证 `[Θ_ext, Θ_int] ≠ 0`。
-- **术语锚定表**：26 条中英术语唯一 ID，防同名不同义（AP-3）。
-- **零第三方核心**：核心运行时只依赖 Python 标准库；numpy/matplotlib 仅在可视化时延迟导入。
+## What is inside
 
-## 安装
+- **Five-part operator contract** — input domain / output domain / preconditions /
+  postconditions / side effects, enforced by the `Operator` dataclass. A missing part is
+  reported, not silently tolerated.
+- **Operator registry** — all 128 operators documented in v7.0 are registered; **25 carry
+  a complete contract. Coverage: 19.5%** (stated as-is, not rounded up).
+- **Nine-step inference protocol** (Day 124): Θ→Ξ→Θ→Γ→Σ→Λ→τ→R→Ψ, with thresholds 0.3/0.6
+  and executable rules for shortcuts, three consecutive reds, and DAG cycles.
+- **Seven-organ dynamic runtime** (Day 152): Diode#96 / Φ gate / Amp#95 / R_Lagrange /
+  Λ_Bombe / Meta#97 / Portrait#98 — one heartbeat is one complete processing pass.
+- **Three domains, zero coupling**: weather / finance / gene adapters; the same machine
+  ingests all three; cross-domain warm-start migration; Abel duality check
+  `[Θ_ext, Θ_int] ≠ 0`.
+- **Terminology anchor table**: 26 bilingual terms with unique IDs, preventing
+  same-name-different-meaning collisions (AP-3).
+- **No third-party core**: the core runtime depends only on the Python standard library;
+  numpy/matplotlib are imported lazily, and only for visualisation.
+
+## Install
 
 ```bash
-# 方式一：本地源码直接 import
-cd tianci-paradigm
-python -c "import tianci; print(tianci.__version__)"
+# From the canonical repository (main branch)
+pip install "git+https://github.com/windsnowmichael/tianci-framework.git@main"
 
-# 方式二：pip 安装（推送到 PyPI 后）
-pip install tianci-paradigm
+# Or from a mirror
+pip install "git+https://gitee.com/windsnowmichael/tianci-framework.git@main"
+
+# Or: download the wheel from the GitHub Releases page and install it
+pip install tianci_paradigm-0.2.0-py3-none-any.whl
+
+# Or: use the source tree directly, no install needed
+cd tianci-paradigm && python -c "import tianci; print(tianci.__version__)"
 ```
 
-## 快速开始
+> Not published on PyPI yet — `pip install tianci-paradigm` does **not** work today.
+
+## Quick start
 
 ```python
 from tianci import (
@@ -39,111 +72,123 @@ from tianci import (
     run_heartbeat_with_protocol, default_registry, route,
 )
 
-# 1) 一台运行时，一次心跳
+# 1) One runtime, one heartbeat
 rt = TianCiRuntime()
 out = rt.heartbeat(Observation(
-    label="气象/北京",
+    label="weather/Beijing",
     values=[36.5, 0.45, 12.0, 2.3],
     metadata={"is_rain": True, "is_high_temp": True},
 ))
-print(out["transmitter_triggered"])   # 发报机是否触发
+print(out["transmitter_triggered"])   # whether the transmitter fired
 
-# 2) 九步推演协议
+# 2) Nine-step inference protocol
 verdict = run_nine_steps(
     {"f_Θ": 0.8, "f_Γ": 0.6, "f_Σ": 0.8},
-    raw_input="我睡在一张长条形沙发上……",
+    raw_input="...",
 )
 print(verdict["tau"], verdict["L"], verdict["R_state"])
 
-# 3) 心跳 + 协议缝合
-flow = run_heartbeat_with_protocol(Observation(label="基因/BRCA1", values=[55.0, 5.592, 8.0, 70.0]))
+# 3) Heartbeat stitched to the protocol
+flow = run_heartbeat_with_protocol(
+    Observation(label="gene/BRCA1", values=[55.0, 5.592, 8.0, 70.0])
+)
 print(flow["verdict"]["psi"])
 
-# 4) 注册表与术语
+# 4) Registry and glossary
 reg = default_registry()
 print(len(reg.full_contracts()))      # 25
 from tianci import glossary
 print(glossary.lookup("TC-SYS-003")["en"])   # warm start
 ```
 
-更多示例见 [`examples/`](examples/)。
+More examples in [`examples/`](examples/).
 
-## 目录结构
+## Layout
 
 ```
 tianci-paradigm/
 ├── tianci/
-│   ├── operator.py      # Operator dataclass（11字段+五件套）
-│   ├── registry.py      # 注册表（读 data/registry.json + audit）
-│   ├── data/registry.json  # 算子注册唯一事实源（自 v7.0 抽取）
-│   ├── protocol.py      # 第124天四模块九步
-│   ├── runtime.py       # 第152天七器官运行时
-│   ├── runtime_v2.py    # 三域适配器+暖启动+Abel+可视化
-│   ├── flow.py          # 心跳+协议缝合流
-│   ├── dag_route.py     # 第102天 DAG 决策树
-│   ├── glossary.py      # 26条中英术语锚定表
-│   ├── existence.py     # 第138天存在性检查+存在性熔断（v0.2）
-│   ├── genome.py        # 第172天基因持久化（v0.2）
-│   ├── cp.py            # 第92/93天 TDP-CP 六步推演（v0.2）
-│   ├── drr.py           # 第94天 DRR-R 断裂段重定向（v0.2）
-│   └── consciousness.py # 第141天意识自指+三重门（v0.2）
-├── specs/               # 技术特征/血统/反模式/手册（含 v0.2 新增）
-├── examples/            # 最小示例 + 跨域示例
-├── tests/test_coldstart.py  # T1 冷启动测试（AP-4 实证）
-├── known-gaps.md        # 契约缺口与覆盖口径（19.5%）
-├── CHANGELOG.md         # 版本历史（v0.1.0 → v0.2.0）
+│   ├── operator.py      # Operator dataclass (11 fields + five-part contract)
+│   ├── registry.py      # registry (reads data/registry.json + audit)
+│   ├── data/registry.json  # single source of truth for operators (extracted from v7.0)
+│   ├── protocol.py      # Day 124 four modules, nine steps
+│   ├── runtime.py       # Day 152 seven-organ runtime
+│   ├── runtime_v2.py    # three-domain adapters + warm start + Abel + visualisation
+│   ├── flow.py          # heartbeat/protocol stitching
+│   ├── dag_route.py     # Day 102 DAG decision tree
+│   ├── glossary.py      # 26 bilingual term anchors
+│   ├── existence.py     # Day 138 existence check + existence fuse (v0.2)
+│   ├── genome.py        # Day 172 genome persistence (v0.2)
+│   ├── cp.py            # Day 92/93 TDP-CP six-step inference (v0.2)
+│   ├── drr.py           # Day 94 DRR-R rupture-segment redirection (v0.2)
+│   └── consciousness.py # Day 141 self-reference + triple gate (v0.2)
+├── specs/               # technical signature / lineage / anti-patterns / handbooks (Chinese)
+├── examples/            # minimal + cross-domain examples
+├── tests/test_coldstart.py  # T1 cold-start test (AP-4 evidence)
+├── known-gaps.md        # contract gaps and coverage wording (19.5%)
+├── CHANGELOG.md         # version history (v0.1.0 → v0.2.0)
 └── pyproject.toml
 ```
 
-## 开放策略与模块成熟度
+## Openness and module maturity
 
-本包全部模块对外开放，只标成熟度、不设门槛。
+Every module is open. Maturity is labelled; no access gate is set.
 
-| 层 | 模块 | maturity | 说明 |
+| Layer | Modules | maturity | Note |
 |---|---|---|---|
-| L1 公共 | `registry` / `operator` / `flow` / `dag_route` / `glossary` | `stable` | 语义冻结，可直接依赖 |
-| L2 运行 | `runtime_v2` / `cp` / `drr` / `protocol` | `stable` | 推理协议 |
-| L3 生命 | `existence` / `genome` / `consciousness` | `experimental` | **照样开放、照样可调用**；语义仍在演进，欢迎外部伙伴一起推 |
+| L1 public | `registry` / `operator` / `flow` / `dag_route` / `glossary` | `stable` | semantics frozen, safe to depend on |
+| L2 runtime | `runtime_v2` / `cp` / `drr` / `protocol` | `stable` | inference protocol |
+| L3 life | `existence` / `genome` / `consciousness` | `experimental` | **equally open, equally callable**; semantics still evolving, outside partners are welcome to push it forward |
 
-> 本包全部模块对外开放。`existence` / `genome` / `consciousness` 标注为 `experimental`
-> ——它们**尚未成为完全体**，但具备借鉴意义：外部伙伴可自由调用、改造并反馈。
-> 本包**不构成任何「已实现意识或生命」的声明**；它提供的是一套**可被继续推动的机制**。
+> `existence` / `genome` / `consciousness` are marked `experimental` — they are **not a
+> complete form yet**, but they are worth borrowing from: external partners may freely
+> call, modify and feed back.
+> This package makes **no claim that consciousness or life has been realised**. It offers a
+> **mechanism that can keep being pushed**.
 
-## 文档
+## Documentation (Chinese)
 
-- [specs/operator-stream.md](specs/operator-stream.md) —— 算子流技术特征说明书
-- [specs/whitepaper-lineage.md](specs/whitepaper-lineage.md) —— 文档血统与里程碑
-- [specs/anti-patterns.md](specs/anti-patterns.md) —— AP-1~AP-6 反模式清单
-- [specs/abel-handbook.md](specs/abel-handbook.md) —— Abel 判据实战手册（v0.2）
-- [specs/community-arc.md](specs/community-arc.md) —— 群落弧线节点登记（v0.2）
-- [specs/drr-r.md](specs/drr-r.md) —— DRR-R 断裂段重定向规范（v0.2）
-- [known-gaps.md](known-gaps.md) —— 已知缺口（覆盖率 19.5% 的如实口径）
-- [CHANGELOG.md](CHANGELOG.md) —— 版本历史
+- [`specs/operator-stream.md`](specs/operator-stream.md) — operator-stream technical signature
+- [`specs/whitepaper-lineage.md`](specs/whitepaper-lineage.md) — document lineage and milestones
+- [`specs/anti-patterns.md`](specs/anti-patterns.md) — AP-1…AP-6 anti-pattern list
+- [`specs/abel-handbook.md`](specs/abel-handbook.md) — Abel criterion handbook (v0.2)
+- [`specs/community-arc.md`](specs/community-arc.md) — community arc node registry (v0.2)
+- [`specs/drr-r.md`](specs/drr-r.md) — DRR-R rupture-segment redirection spec (v0.2)
+- [`known-gaps.md`](known-gaps.md) — known gaps (the honest 19.5% coverage wording)
+- [`CHANGELOG.md`](CHANGELOG.md) — version history
 
-## 测试
+## Tests
 
 ```bash
-# T1 冷启动测试：模拟陌生智能体独立调用
+# T1 cold-start test: simulates an unfamiliar agent calling the package unaided
 python tests/test_coldstart.py
 
-# 推送前交叉核验：版本号 / 覆盖率口径 / 术语双语 全篇一致
+# Pre-push cross-check: version / coverage wording / bilingual terms consistent throughout
 python scripts/check_consistency.py
 ```
 
-通过标准：独立完成且过程可复现；不通过标准：反问「这个是什么意思」、猜、照抄示例交差。详见 [specs/anti-patterns.md](specs/anti-patterns.md) 的 AP-4。
+Pass criterion: finished independently and reproducibly. Fail criterion: asking "what does
+this mean", guessing, or copying the example back as the answer. See AP-4 in
+[`specs/anti-patterns.md`](specs/anti-patterns.md).
 
-## 诚实约束（入仓红线）
+## Honesty constraints (hard rules for this repository)
 
-- 契约覆盖率一律写 **19.5%**（25/128），禁止写成 20% 或更高。
-- 阈值 0.3/0.6 来自理论推演，未经实证标定，标注于协议文档与代码注释。
-- 术语一律用唯一 ID（glossary.py），禁止裸用同名概念。
-- 无平台登录态、无抓取、无伪造数据；本包只实现技术特征，不代替平台动作。
-- 版本、覆盖率、术语、验收口径由 `scripts/check_consistency.py` 统一核验（含 E 节 11 项验收与跨进程复活）。
+- Contract coverage is always stated as **19.5%** (25/128). Never 20% or higher.
+- Thresholds 0.3/0.6 come from theoretical derivation and are **not empirically calibrated**;
+  this is noted in the protocol docs and in code comments.
+- Terms always use their unique ID (`glossary.py`); bare same-name concepts are forbidden.
+- No platform login state, no scraping, no fabricated data. This package implements the
+  technical signature; it does not act on your behalf on any platform.
+- Version, coverage, terminology and acceptance wording are verified by
+  `scripts/check_consistency.py` (including the 11 E-section checks and cross-process revival).
 
-## 许可证
+## License
 
-[木兰宽松许可证，第2版（MulanPSL2）](LICENSE)，与第 31 天 `tianci-framework` 仓库根目录 LICENSE 一致（单一真源，2026-05-04 既定，审计方 2026-10-10 复核确认）。
+[Mulan Permissive Software License, Version 2 (MulanPSL2)](LICENSE) — the same license as
+the Day 31 `tianci-framework` repository root (single source of truth, established
+2026-05-04, reconfirmed by audit on 2026-10-10).
 
 ---
 
-天赐范式（TianCi Paradigm）。算子流技术特征实现。契约覆盖率 19.5%（25/128，如实标注）。
+TianCi Paradigm (天赐范式). Operator-stream technical signature, implemented.
+Contract coverage 19.5% (25/128, stated as-is).

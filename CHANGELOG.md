@@ -3,6 +3,18 @@
 本文件记录 tianci-paradigm 的发布历史。版本号以 `tianci/__init__.py` 的 `__version__`
 为单一真源；每次变更同步更新本文档与 `specs/anti-patterns.md` AP-5 的版本示例。
 
+## [未发布] - 2026-10-10（文档与核验脚本，不改包版本，仍为 0.2.0）
+
+- **README.md 改为英文**：作为英文入口，供国际读者与 PyPI 渲染；中文版保留在
+  `README_CN.md`，两个文件互为链接。
+- **明确边界**：`specs/`、`known-gaps.md`、`CHANGELOG.md` 仍为中文，**暂无英译**；
+  代码 docstring 亦不翻译。英文 README 已显式标注这一点，避免"以为有英文版"。
+- **不新增 `README_EN.md`**：避免"哪个才是真 README"的真源竞争。
+- **修复 `scripts/check_consistency.py` 的语言偏私**：`NEGATIVE_HINT` 原本只有中文
+  否定词，导致英文文档写 "Never 20% or higher" 被误判为"疑似虚报覆盖率"。
+  现补入英文否定词并改为**大小写无关**匹配。已做负向自检：真虚报
+  （`coverage is 20.3%` / `Coverage reached 20%`）**仍被拦截**，中英文禁令句均放行。
+
 ## [0.2.0] - 2026-10-10
 
 v0.2 修包（任务单《tianci-paradigm v0.2 修包建议 v1》A~F 节）。新增 6 个可执行模块/
