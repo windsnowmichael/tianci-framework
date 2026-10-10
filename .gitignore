@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+sdist/
+wheels/
+*.whl
+
+# 虚拟环境
+.venv/
+venv/
+env/
+ENV/
+
+# 测试与缓存
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# 运行时产物（基因/暖启动包属本地状态，不入库）
+genome*.json
+warm_start*.json
+*.sqlite
+*.db
+
+# 编辑器与系统
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tianci-paradigm"
+version = "0.2.0"
+description = "天赐范式（TianCi Paradigm）算子流技术特征的可 import 实现：算子契约五件套 / 九步推演协议 / 七器官动态运行时 / 术语锚定表"
+readme = "README.md"
+requires-python = ">=3.9"
+# 许可证：木兰宽松许可证 第2版（MulanPSL2），与第31天两个仓库根目录 LICENSE 一致（单一真源）
+# PEP 639：license 用 SPDX 表达式；OSI classifier 已被表达式取代，不可并用（否则 setuptools 报冲突）
+license = "MulanPSL-2.0"
+keywords = ["tianci-paradigm", "operator-stream", "inference-protocol", "self-reference", "dynamic-runtime"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering",
+    "Operating System :: OS Independent",
+]
+dependencies = []
+
+[project.optional-dependencies]
+visual = ["numpy>=1.20", "matplotlib>=3.5"]
+
+[project.urls]
+# canonical（唯一真源）：https://github.com/windsnowmichael/tianci-framework
+# 镜像（AtomGit + 第三平台）在 README 首屏显式标注 mirror，不列入 urls（避免多真源）
+Homepage = "https://github.com/windsnowmichael/tianci-framework"
+Repository = "https://github.com/windsnowmichael/tianci-framework"
+Source = "https://github.com/windsnowmichael/tianci-framework"
+
+[tool.setuptools]
+packages = ["tianci", "tianci.data"]
+
+[tool.setuptools.package-data]
+"tianci.data" = ["registry.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
