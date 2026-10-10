@@ -1,12 +1,25 @@
 # 天赐范式 · tianci-framework
 
+> [!IMPORTANT]
+> **本分支（`master`）是 2026-05 之前的论文投稿材料归档，已停止更新。**
+>
+> 天赐范式的最新可安装实现在 **`main` 分支**：`tianci-paradigm` **v0.2.0**（2026-10-10）。
+> · 算子注册表登记 **128 个算子**，其中 **25 个**具备完整五件套契约（覆盖率 **19.5%**，如实标注）
+> · 可 `pip install` 后直接 `import tianci` 调用，含九步推演协议、七器官运行时、
+>   存在性熔断、基因持久化、TDP-CP / DRR-R
+> · 许可证：木兰宽松许可证第 2 版（MulanPSL-2.0）
+>
+> **最新入口（canonical）**：<https://github.com/windsnowmichael/tianci-framework>（请切换到 `main` 分支）
+> 镜像：Gitee / AtomGit 同名仓库的 `main` 分支。
+>
+> 本分支下方的算子数量、公式数量等数字均为**历史快照**，不代表当前状态。
 [![CI](https://github.com/windsnowmichael/tianci-framework/actions/workflows/ci.yml/badge.svg)](https://github.com/windsnowmichael/tianci-framework/actions/workflows/ci.yml)
 
 **算子即一切，一切即算子。**
 
 天赐范式是一套**白盒、可解释、可复现**的跨领域统一推演框架。以**公理化算子体系**为骨架，以**数学收敛性定理**为地基，以**可运行代码**为验证，覆盖计算流体力学、环境治理、全灾种应急、全息经济学等领域。
 
-本仓库是天赐范式的完整代码实现，所有算子定义、数值求解器、验证脚本均对外公开。
+本仓库**本分支**收录的是论文投稿材料（源码、数据、验证脚本），已归档、不再更新；可 `import` 的最新实现请见 `main` 分支的 `tianci-paradigm` 包。
 
 ---
 
@@ -45,7 +58,9 @@
 | Λ-耦合 | 跨算子耦合强度调节 |
 | 曲率能量 | 梯度曲率能量估计 |
 
-> 完整算子体系（67个算子、100+公式）见[算子与公式大全](天赐范式算子与公式大全.md)和[Day44双语版](TianCi_Paradigm_Day44_Operator_Compendium_CN_EN.md)。
+> 完整算子体系：本快照记录为 **67 个算子、100+ 公式**（2026-05 前的口径）；
+> 截至 2026-10-10，注册表已登记 **128 个算子**、其中 **25 个**具备完整契约（覆盖率 19.5%）——**以 `main` 分支的 `tianci-paradigm` 注册表为准**。
+> 历史文档见[算子与公式大全](天赐范式算子与公式大全.md)和[Day44双语版](TianCi_Paradigm_Day44_Operator_Compendium_CN_EN.md)。
 
 ---
 
