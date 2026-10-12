@@ -19,9 +19,9 @@ __version__ = "0.3.0"               # 本包版本（推送 PyPI/GitHub 用）
 __spec_version__ = "v7.0"           # 对标的天赐范式规范版本
 __article_version__ = "v3.3.x"      # 对标的体系文章版本（需求契约给定值；映射文章待确认）
 __title__ = "tianci-paradigm"
-# __commit__：构建时由 scripts/build_wheel.py 生成 tianci/_build_info.py 注入来源 commit；
-# 源码树（未构建）时回退 None——与发布 tag 对齐：`pip install ...@v0.3.0` 装出后
-# `tianci.__commit__` 应等于 tag 指向的 commit。
+# __commit__：仅构建 Release wheel 时由 scripts/build_wheel.py 生成 tianci/_build_info.py
+# 注入来源 commit；纯源码安装（git+https@tag 或源码树直用）无 _build_info.py，回退 None。
+# commit 级自证需安装 Release wheel（与 README「版本自证」口径一致）。
 try:
     from ._build_info import __commit__  # noqa: E402, F401
 except ImportError:  # pragma: no cover —— 源码树无 _build_info.py

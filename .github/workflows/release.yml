@@ -66,8 +66,13 @@ jobs:
         run: |
           python -m venv /tmp/verify_venv
           /tmp/verify_venv/bin/pip install --quiet dist/*.whl
-          /tmp/verify_venv/bin/python - <<'EOF'
+          # 关键：必须切出仓库根目录再跑 heredoc。Actions 的 CWD 是 checkout 根目录，
+          # 源码树 tianci/ 在此（_build_info.py 已被 build_wheel.py 清理），
+          # Heredoc 的 sys.path[0]='' 会让 import tianci 命中源码树而非 wheel，
+          # 造成"wheel 装出 __commit__=None"的假阳性（v0.3.0 首次 CI 失败即此）。
+          cd /tmp && /tmp/verify_venv/bin/python - <<'EOF'
           import tianci as tc
+          assert "/verify_venv/" in tc.__file__, f"import 来源非 venv: {tc.__file__}"
           assert tc.__version__ == "0.3.0", tc.__version__
           assert tc.__commit__ is not None, "未注入 __commit__"
           from tianci.glossary import lookup
