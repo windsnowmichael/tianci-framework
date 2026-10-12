@@ -37,11 +37,11 @@ full = reg.full_contracts()                # 只有 25 个五件套齐全的算�
 |---|---|
 | 当日实证 | 190-2 降调3 的 2ω² 已第二次挂账；旧版覆盖新版后归因"伙伴在改" |
 | 检出判据 | ① 同条债第二次出现在降调栏 ② 改稿无时间戳快照 ③ 声称数量与实际编号不符 ④ **新增设计只见于 specs/known-gaps，归档目录检索不到对应已有实现（方案出口）** |
-| 本包对策 | ① 版本号显式化：`__version__ = "0.2.0"` 只在 `__init__.py` 单一真源；② `CANONICAL` 指针指向唯一权威仓库地址；③ git tag 与 CHANGELOG 同步（见 README 发布流程）；④ 方案类产出标注"方案出口"并挂 AP-6 检出判据 |
+| 本包对策 | ① 版本号显式化：`__version__ = "0.3.0"` 只在 `__init__.py` 单一真源；② `CANONICAL` 指针指向唯一权威仓库地址；③ git tag 与 CHANGELOG 同步（见 README 发布流程）；④ 方案类产出标注"方案出口"并挂 AP-6 检出判据 |
 
 ```python
 import tianci
-tianci.__version__           # 0.2.0 —— 单一真源，不散落在各模块
+tianci.__version__           # 0.3.0 —— 单一真源，不散落在各模块
 tianci.CANONICAL             # canonical 指针：来源文档 + 权威仓库 + 覆盖率口径
 ```
 

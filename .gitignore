@@ -23,6 +23,12 @@ ENV/
 .coverage
 htmlcov/
 
+# 构建期注入产物（scripts/build_wheel.py 生成，不入库）
+tianci/_build_info.py
+
+# 发布打包物（本地留档 zip，不入库）
+*.zip
+
 # 运行时产物（基因/暖启动包属本地状态，不入库）
 genome*.json
 warm_start*.json

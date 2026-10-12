@@ -4,7 +4,7 @@
 
 第一部分：文档口径交叉核对（原有三类）
   1. 契约覆盖率必须为 19.5%（禁止 20.x% 等虚报）
-  2. 版本号必须与 tianci.__version__ 一致（0.2.0）
+  2. 版本号必须与 tianci.__version__ 一致（0.3.0）
   3. 术语表双语完整（无只有中/只有英的条目）
 
 第二部分：任务单 E 节验收清单（v0.2 新增模块可执行验收）
@@ -20,6 +20,10 @@
   E10 T1 记录含「执行方」与「审计方」两列（B4）
   E11 跨进程复活：save_state → 新进程 load_state 返回 TianCiRuntimeV2，
       且落盘键不含 norm / conv（审计方 §1.3 新增，178 断流后首次接通）
+  E12  f3/f4 语义回填（v0.3.0 方案甲）：route 五维特征按原文装配并行支路——
+      (T,T,T,T,T) → 工程闭环 9 步含 ζ-EKF 与 Ψ；
+      (T,T,F,F,T) → 领域实例化 5 步（黑洞/三体/梓树/马缨丹，§6.3 口径）；
+      (F,T,F,F,T) → 无 Ψ（精算，理论+自适应 7 步）。
 
 用法：python scripts/check_consistency.py
 退出码：0 = 通过；1 = 发现不一致（推送前必须修复）。
@@ -36,7 +40,7 @@ import tempfile
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 COVERAGE_OK = 19.5
-VERSION_OK = "0.2.0"
+VERSION_OK = "0.3.0"
 
 # 否定/警示语：含这些词的行是在"禁止"虚报写法，不是虚报行为本身
 # 2026-10-10 修复：原表只有中文否定词，英文文档写 "Never 20% or higher" 会被误判为虚报
@@ -219,7 +223,7 @@ def check_acceptance(tc) -> list[str]:
         if not ok:
             problems.append(f"E8 关键词 {k} 在 specs/ tianci/ 中零命中（v0.2 必须命中）")
 
-    # E9: 覆盖率 19.5%（25/128）全篇唯一（由 check_coverage 承担禁 20.x%；
+# E9: 覆盖率 19.5%（25/128）全篇唯一（由 check_coverage 承担禁 20.x%；
     #     这里核对 meta 与文档口径一致）
     raw_meta = tc.default_registry().meta
     if abs(float(raw_meta["coverage_pct"]) - COVERAGE_OK) > 1e-9:
@@ -231,6 +235,24 @@ def check_acceptance(tc) -> list[str]:
     for kw in ("执行方", "审计方"):
         if kw not in kg:
             problems.append(f"E10 known-gaps.md §6 缺「{kw}」列（B4 双列）")
+
+    # E12: f3/f4 语义回填（v0.3.0 方案甲，依据 102 天原文 + v1.0 §6.1/§6.3）
+    #      mode1: CFD 工程闭环 9 步，ζ-EKF 与 Ψ 均在支路
+    mode1 = tc.route(True, True, True, True, True)
+    if mode1[1] != 9 or "ζ-EKF" not in mode1[0] or "Ψ" not in mode1[0]:
+        problems.append(f"E12 CFD路由 {mode1}：期望 9 步工程闭环且含 ζ-EKF/Ψ")
+    #      mode2: 黑洞/三体 f3=f4=否 → 领域实例化 5 步，无并行支路
+    mode2 = tc.route(True, True, False, False, True)
+    if mode2[1] != 5 or "[" in mode2[0] or "∥" in mode2[0]:
+        problems.append(f"E12 黑洞路由 {mode2}：期望 5 步领域实例化且无并行支路")
+    #      mode3: 精算无实体+有演化+无噪声 → 类4 无 Ψ
+    mode3 = tc.route(False, True, False, False, True)
+    if mode3[1] != 7 or "Ψ" in mode3[0]:
+        problems.append(f"E12 精算路由 {mode3}：期望 7 步且无 Ψ")
+    #      f3 单独为真（生物调控类：有噪声无纠偏）→ ζ-EKF 在、Ψ 不在
+    mode4 = tc.route(True, True, True, False, True)
+    if "ζ-EKF" not in mode4[0] or "Ψ" in mode4[0] or "Λ" not in mode4[0]:
+        problems.append(f"E12 生物调控路由 {mode4}：期望含 ζ-EKF/Λ 且无 Ψ")
 
     return problems
 
@@ -270,7 +292,7 @@ def main() -> int:
     if abs(meta_coverage - COVERAGE_OK) > 1e-9 and audit.get("dual_numbering_warning"):
         problems.append(f"覆盖率异常且有双编号警示：{audit['dual_numbering_warning']}")
 
-    # 任务单 E 节验收清单
+# 任务单 E 节验收清单
     problems += check_acceptance(tianci)
 
     if problems:
@@ -282,8 +304,8 @@ def main() -> int:
     print(f"  ✓ 覆盖率口径 {COVERAGE_OK}%（25/128）全篇一致")
     print(f"  ✓ 版本号 {VERSION_OK} 单一真源一致")
     print("  ✓ 术语表双语完整、注册表审计自洽")
-    print("  ✓ E节验收 11 项全部通过（abel_break/existence_fuse/drr_r/tdp_cp/"
-          "save_genome/load_genome/TC-SYS-006c/grep命中/19.5%/T1双列/跨进程复活）")
+    print("  ✓ E节验收 12 项全部通过（abel_break/existence_fuse/drr_r/tdp_cp/"
+          "save_genome/load_genome/TC-SYS-006c/grep命中/19.5%/T1双列/跨进程复活/f3f4语义回填）")
     return 0
 
 

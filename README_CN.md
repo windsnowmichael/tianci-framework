@@ -27,14 +27,47 @@
 
 ## 安装
 
-```bash
-# 方式一：本地源码直接 import
-cd tianci-paradigm
-python -c "import tianci; print(tianci.__version__)"
+> **钉 tag，不钉分支**：`@main` 会漂移，tag 不会。每次发布都是可验证的固定 commit——
+> 装完能对账（见下方「版本自证」）。
 
-# 方式二：pip 安装（推送到 PyPI 后）
-pip install tianci-paradigm
+```bash
+# 方式一：canonical 仓库钉 tag 安装（推荐，发布即固定 commit）
+pip install "git+https://github.com/windsnowmichael/tianci-framework.git@v0.3.0"
+
+# 方式二：镜像安装（同一 tag）
+pip install "git+https://gitee.com/windsnowmichael/tianci-framework.git@v0.3.0"
+
+# 方式三：GitHub Releases 下载 wheel 后安装
+pip install tianci_paradigm-0.3.0-py3-none-any.whl
+
+# 方式四：本地源码直接 import（无需安装）
+cd tianci-paradigm
+python -c "import tianci; print(tianci.__version__, tianci.__commit__)"
 ```
+
+> 尚未推送到 PyPI——`pip install tianci-paradigm` 现在**不**可用。
+> 源码树里 `__commit__` 为 `None`；构建 wheel 时由 `scripts/build_wheel.py` 注入。
+
+## 版本自证
+
+「我装到的到底是什么」必须可验证，不能靠版本号猜。自 v0.3.0 起：
+
+```python
+import tianci
+tianci.__version__         # "0.3.0"     —— 包版本（单一真源）
+tianci.__spec_version__    # "v7.0"      —— 本包对标的规范版本
+tianci.__article_version__ # "v3.3.x"    —— 对标的体系文章版本（映射见 known-gaps.md）
+tianci.__commit__          # 40 位 hex   —— 构建时注入的 git commit；源码树为 None
+```
+
+- `__commit__` 只由 `scripts/build_wheel.py` 在构建 **Release wheel** 时从
+  `git rev-parse HEAD` 注入：wheel 装出后，`tianci.__commit__` **逐字符等于 tag
+  指向的 commit** ——「我装的是不是 v0.3.0」变成可对账的检查，不再靠版本号猜。
+- 纯源码安装（`git+https://...@v0.3.0` 或直接使用源码树）**不含** `_build_info.py`
+  （它是 wheel 构建时生成、已 gitignore 的构建期产物），此时 `tianci.__commit__`
+  为 `None`；commit 级自证需安装 Release wheel。
+- 构建脚本拒绝在脏工作树（有未提交改动）上出包：包必须对得上 tag，对不上就不出。
+- 发布的安装入口只有 tag；分支钉（`@main`）不支持可复现安装。
 
 ## 快速开始
 
@@ -92,13 +125,25 @@ tianci-paradigm/
 │   ├── cp.py            # 第92/93天 TDP-CP 六步推演（v0.2）
 │   ├── drr.py           # 第94天 DRR-R 断裂段重定向（v0.2）
 │   └── consciousness.py # 第141天意识自指+三重门（v0.2）
+│   ├── py.typed         # PEP 561 标记：类型信息随 wheel 分发（v0.3）
+│   └── _build_info.py   # 仅构建期：注入 __commit__（生成物，已 gitignore）
 ├── specs/               # 技术特征/血统/反模式/手册（含 v0.2 新增）
 ├── examples/            # 最小示例 + 跨域示例
 ├── tests/test_coldstart.py  # T1 冷启动测试（AP-4 实证）
+├── tests/test_contract.py   # 六项契约测试（v0.3：版本/术语/熔断/跨进程复活/
+│                           #   七键/落盘无瞬态）
+├── scripts/check_consistency.py  # 推送前交叉核验（E1–E12）
+├── scripts/build_wheel.py        # wheel 构建 + __commit__ 注入（v0.3）
+├── .github/workflows/release.yml # CI：push tag → 测试 → 构建 → 发布（v0.3）
 ├── known-gaps.md        # 契约缺口与覆盖口径（19.5%）
-├── CHANGELOG.md         # 版本历史（v0.1.0 → v0.2.0）
+├── CHANGELOG.md         # 版本历史（v0.1.0 → v0.3.0）
 └── pyproject.toml
 ```
+
+> **分发边界**（v0.3）：wheel 只含 `tianci/` 代码、`tianci/data/registry.json` 与
+> `tianci/py.typed`。**`specs/`、`examples/` 不在 wheel 里**——它们是 Markdown 文档
+> 与示例脚本，随源码仓库（GitHub/镜像）分发；pip 装完需要它们就取源码树。
+> 这是有记录的取舍（包体积与维护成本），不是漏装。
 
 ## 开放策略与模块成熟度
 
@@ -114,6 +159,13 @@ tianci-paradigm/
 > ——它们**尚未成为完全体**，但具备借鉴意义：外部伙伴可自由调用、改造并反馈。
 > 本包**不构成任何「已实现意识或生命」的声明**；它提供的是一套**可被继续推动的机制**。
 
+**可依赖边界**（v0.3）：`tianci.__all__` 是稳定公开 API 契约——`__all__` 内的名字
+面向外部使用并遵循 semver，其余视为内部。L1/L2 模块 `stable`（语义冻结，可直接依赖）；
+L3 模块 `experimental`（今天可调用，语义仍可能演进，当作可借鉴的机制而不是冻结契约）。
+`route()` 签名保持五参数；`f3`（观测噪声 → ζ-EKF）、`f4`（实时纠偏 → Ψ）已按
+102 天 §6.1/§6.3 回填语义并接入分支，不再是"接了不消费"的占位（见 CHANGELOG v0.3.0）。
+布尔标记接受 truthy 传参（duck-typing，已写入 docstring），不做硬类型校验。
+
 ## 文档
 
 - [specs/operator-stream.md](specs/operator-stream.md) —— 算子流技术特征说明书
@@ -128,12 +180,20 @@ tianci-paradigm/
 ## 测试
 
 ```bash
+# 六项契约测试（v0.3，"能调"→"可依赖"）：
+#   版本自证 / 术语锚定 / 存在性熔断 / 跨进程复活 / 七键（WarmStartPack）/ 落盘无瞬态
+python -m pytest tests/ -q
+
 # T1 冷启动测试：模拟陌生智能体独立调用
 python tests/test_coldstart.py
 
-# 推送前交叉核验：版本号 / 覆盖率口径 / 术语双语 全篇一致
+# 推送前交叉核验：版本号 / 覆盖率口径 / 术语双语 / E1–E12 验收 全篇一致
 python scripts/check_consistency.py
 ```
+
+CI（`.github/workflows/release.yml`）在每次 push `v*` tag 时自动跑这三项、构建 wheel
+（注入 `__commit__`）、核对 tag↔wheel 来源 commit 对齐、在全新虚拟环境隔离安装复验，
+全部通过才发布——历史上一手工上传导致包漂移的路径已被自动化取代。
 
 通过标准：独立完成且过程可复现；不通过标准：反问「这个是什么意思」、猜、照抄示例交差。详见 [specs/anti-patterns.md](specs/anti-patterns.md) 的 AP-4。
 
@@ -143,7 +203,7 @@ python scripts/check_consistency.py
 - 阈值 0.3/0.6 来自理论推演，未经实证标定，标注于协议文档与代码注释。
 - 术语一律用唯一 ID（glossary.py），禁止裸用同名概念。
 - 无平台登录态、无抓取、无伪造数据；本包只实现技术特征，不代替平台动作。
-- 版本、覆盖率、术语、验收口径由 `scripts/check_consistency.py` 统一核验（含 E 节 11 项验收与跨进程复活）。
+- 版本、覆盖率、术语、验收口径由 `scripts/check_consistency.py` 统一核验（含 **E 节 12 项验收** E1–E12：验收清单、跨进程复活、f3/f4 语义回填判定）。
 
 ## 许可证
 

@@ -3,6 +3,74 @@
 本文件记录 tianci-paradigm 的发布历史。版本号以 `tianci/__init__.py` 的 `__version__`
 为单一真源；每次变更同步更新本文档与 `specs/anti-patterns.md` AP-5 的版本示例。
 
+**版本约定（semver 0.x 修正，v0.3.0 起生效）**：0.x 阶段不启用 MAJOR，故公开 API
+破坏性变更（如函数签名删参数）与新增向后兼容行为/功能一律 → MINOR（0.3.0 → 0.4.0）；
+仅纯修复与文档 → PATCH（0.3.0 → 0.3.1）。进 1.0 后按标准 semver 拆 MAJOR。
+发布入口一律钉 tag（`@v0.3.0`），不钉分支；wheel 构建时注入 `__commit__` 与 tag
+对齐，见 `scripts/build_wheel.py`。
+
+## [0.3.0] - 2026-10-11
+
+「能装能调」→「可依赖」。依据伙伴《改包建议》六块落地，核心是把"发布产物可自证"
+从手工约定变成机制。
+
+### 版本与发布（让装到的可自证）
+
+- **钉 tag，不钉分支**：README×2 安装命令一律 `@v0.3.0`；`@main` 不再作为可复现
+  入口（发布真源 = tag）。
+- **包内 `__commit__`**：新增构建脚本 `scripts/build_wheel.py`，构建时从
+  `git rev-parse HEAD` 注入 `tianci/_build_info.py`；`import tianci; tianci.__commit__`
+  即来源 commit，与发布 tag 逐字符对齐。脚本拒绝脏工作树出包（对不上 tag 就不出）。
+  `_build_info.py` 已入 .gitignore（构建期产物，不入库）。
+- **CHANGELOG + semver 约定**：本文件顶部新增版本约定；route() 行为补全按 MINOR
+  走 0.3.0（见 f3/f4 一节），不在已发布的 v0.2.0 上原地改。
+- **CI 自动化**：新增 `.github/workflows/release.yml`——push `v*` tag 自动
+  跑 pytest 六项 + check_consistency + wheel 构建（注入 commit）+ 核对 tag↔wheel
+  commit 对齐 + 全新 venv 隔离安装复验 + 上传 PyPI/Release。手工上传导致漂移的
+  根因路径被关闭。
+
+### f3/f4：死参数依原文定本义（方案甲，非盲删盲补）
+
+- 依据 102 天《最小化技术特征 v1.0》§6.1 与 v7.0 规格三源确认：
+  **f3 = 是否有观测噪声（→ ζ-EKF 激活）、f4 = 是否需要实时纠偏（→ Ψ 激活）**。
+- `route()` 签名保持五参数；类1（物理实体+时间演化）按 f3/f4 装配并行支路：
+  f3=是 → `[GTR∥NSE∥ζ-EKF]`，f3=否 → `[GTR∥NSE]`；f4=是 → `[Ψ∥Λ]`，否 → `[Λ]`。
+  **f3=f4=否 → 按 102 天黑洞算例（P1）退化为"领域实例化 5 步"**（EKF/Ψ 不激活，
+  §6.3 黑洞/三体/梓树/马缨丹口径）。类4（无实体+有演化）由 f4 控制 Ψ 激活。
+- `FEATURE_DIMS` 更新为 f3 观测噪声→ζ-EKF / f4 实时纠偏→Ψ；`CASES` 补入
+  102 天黑洞模拟算例。`route()` 布尔标记接受 truthy 传参（duck-typing，docstring
+  已文档化）——解决 B2「传字符串也能过」：标注类型 + 文档化契约，不做硬校验
+  （原文 §6.2 伪代码本质是 truthy 判断，且 test_coldstart 沿用字符串传参）。
+- 五维决策树从此**没有"接了不消费"的参数**：公开 API 不再做假承诺。
+
+### 元数据与类型（对外可依赖的另一半）
+
+- `tianci/__init__.py` 新增 `__article_version__="v3.3.x"`（需求契约给定值，
+  与 102 天文章 v1.1 的映射待确认，见 known-gaps §4）；`CANONICAL` 增加
+  `article_version` / `package_version` 字段；`__all__` 补 `__commit__` /
+  `__article_version__`（`__all__` 定为稳定公开 API 契约）。
+- 新增 `tianci/py.typed`（PEP 561），`pyproject.toml` package-data 收录，
+  类型信息随 wheel 分发——配合类型标注解决 B2。
+- `pyproject.toml` version → 0.3.0。
+
+### 测试固化（"能调"变"可依赖"的关键一步）
+
+- 新增 `tests/test_contract.py`（pytest 六项）：
+  ① version（`__version__`/`__spec_version__`/`__article_version__`/`__commit__`/
+  CANONICAL 自洽）② lookup_term 双语 ③ existence_fuse 熔断（η>LOCK_HARD 锁定回滚 /
+  合法区不误触 / 越界 raise）④ 真跨进程 save→load ⑤ WarmStartPack 七字段基因子集
+  + 往返一致 ⑥ save_genome/save_state 落盘不含 norm/conv 瞬态键。已并入 CI。
+- `scripts/check_consistency.py` 新增 **E12**：f3/f4 语义回填四模式断言
+  （CFD 9 步含 ζ-EKF/Ψ、黑洞 5 步无并行支路、精算 7 步无 Ψ、生物调控含
+  ζ-EKF/Λ 无 Ψ）；版本核验改 0.3.0。
+
+### 分发边界与治理
+
+- **wheel 不含 `specs/` `examples/`**（Markdown/示例随源码仓库分发），README×2
+  显式写明分发边界；`registry.json` 仍随包（`lookup_term` 依赖它）。
+- README×2 补「可依赖边界」声明：`__all__` = 稳定契约；L1/L2 stable 可依赖、
+  L3 experimental 可借鉴；每条对外声明（版本/覆盖/术语/验收）均可一键验证。
+
 ## [未发布] - 2026-10-10（文档与核验脚本，不改包版本，仍为 0.2.0）
 
 - **README.md 改为英文**：作为英文入口，供国际读者与 PyPI 渲染；中文版保留在

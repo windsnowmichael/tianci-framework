@@ -15,15 +15,24 @@ tianci — 天赐范式（TianCi Paradigm）可 import 技术包。
 from __future__ import annotations
 
 # ---- 版本与 canonical 指针 ----
-__version__ = "0.2.0"               # 本包版本（推送 PyPI/GitHub 用）
+__version__ = "0.3.0"               # 本包版本（推送 PyPI/GitHub 用）
 __spec_version__ = "v7.0"           # 对标的天赐范式规范版本
+__article_version__ = "v3.3.x"      # 对标的体系文章版本（需求契约给定值；映射文章待确认）
 __title__ = "tianci-paradigm"
+# __commit__：构建时由 scripts/build_wheel.py 生成 tianci/_build_info.py 注入来源 commit；
+# 源码树（未构建）时回退 None——与发布 tag 对齐：`pip install ...@v0.3.0` 装出后
+# `tianci.__commit__` 应等于 tag 指向的 commit。
+try:
+    from ._build_info import __commit__  # noqa: E402, F401
+except ImportError:  # pragma: no cover —— 源码树无 _build_info.py
+    __commit__: str | None = None  # type: ignore[no-redef]
 # CANONICAL：当前唯一权威版的指针（审计方 2026-10-10 确认，单一真源）。
 # 本包是第31天 tianci-framework（19+ 原生算子）的后继；旧仓标 archived 并指向本包。
 CANONICAL = {
     "name": "tianci-paradigm",
     "spec_version": "v7.0",
-    "package_version": "0.2.0",
+    "article_version": "v3.3.x",
+    "package_version": "0.3.0",
     "source": "天赐范式算子与公式大全_v7.0_终极整合扩展版.md",
     "canonical_repo": "https://github.com/windsnowmichael/tianci-framework",
     "mirror": ["AtomGit（镜像，非真源）", "第三平台（镜像，非真源）"],
@@ -145,7 +154,8 @@ from .consciousness import (                                                  # 
 
 __all__ = [
     # 版本
-    "__version__", "__spec_version__", "CANONICAL", "MODULE_MATURITY",
+    "__version__", "__spec_version__", "__article_version__", "__commit__",
+    "CANONICAL", "MODULE_MATURITY",
     # 算子契约
     "Operator", "CORE_CONTRACT_FIELDS",
     # 注册表

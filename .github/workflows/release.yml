@@ -1,0 +1,106 @@
+name: release
+
+# 发布工作流（v0.3.0 起）：push tag v* 自动构建 wheel + 跑全部核验 + 上传发布。
+# 手工上传是历史上包漂移的根因，自动化让"push 即验证、tag 即真源"。
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch: {}        # 手动触发（调试用）
+
+permissions:
+  contents: read
+
+jobs:
+  verify-and-build:
+    name: 核验 + 构建 wheel
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0        # 需要完整历史以校验 tag → commit
+          token: ${{ secrets.GITHUB_TOKEN }}  # 显式声明，便于审计
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip build pytest
+          python -m pip install .
+
+      - name: 六项契约测试（pytest）
+        run: python -m pytest tests/ -q
+
+      # T1 冷启动（known-gaps §6 核心验收件）：脚本式写法（main()，无 test_ 函数），
+      # pytest 收集数为 0，必须独立运行才能纳入门禁。
+      - name: T1 冷启动脚本（independent run）
+        run: python tests/test_coldstart.py
+
+      - name: 推送前核验（check_consistency.py，含 E1–E12）
+        run: python scripts/check_consistency.py
+
+      - name: 构建 wheel（注入 __commit__）
+        run: python scripts/build_wheel.py
+
+      - name: 核实 tag → commit 对齐
+        run: |
+          TAG_COMMIT=$(git rev-list -n 1 "$GITHUB_REF_NAME")
+          PKG=$(python - <<'EOF'
+          import glob, zipfile
+          whl = glob.glob("dist/*.whl")[0]
+          with zipfile.ZipFile(whl) as z:
+              name = [n for n in z.namelist() if n.endswith("_build_info.py")][0]
+              src = z.read(name).decode("utf-8")
+          print(src.split('"')[1])
+          EOF
+          )
+          echo "tag   → $TAG_COMMIT"
+          echo "wheel → $PKG"
+          test "$TAG_COMMIT" = "$PKG" || { echo "tag 与 wheel 来源 commit 不一致"; exit 1; }
+
+      - name: 安装隔离复验（陌生环境装到可自证）
+        run: |
+          python -m venv /tmp/verify_venv
+          /tmp/verify_venv/bin/pip install --quiet dist/*.whl
+          /tmp/verify_venv/bin/python - <<'EOF'
+          import tianci as tc
+          assert tc.__version__ == "0.3.0", tc.__version__
+          assert tc.__commit__ is not None, "未注入 __commit__"
+          from tianci.glossary import lookup
+          t = lookup("TC-SYS-003")
+          assert t is not None and t["zh"] == "暖启动"
+          print("隔离安装复验通过:", tc.__version__, tc.__commit__[:12])
+          EOF
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheel
+          path: dist/*.whl
+
+  publish:
+    name: 上传 PyPI
+    needs: verify-and-build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write        # 同时打 GitHub Release（含源码 zip）
+      id-token: write        # PyPI trusted publishing
+    environment: pypi
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: wheel
+          path: dist/
+
+      - name: 发布到 PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+      - name: 创建 GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.whl
+          generate_release_notes: true

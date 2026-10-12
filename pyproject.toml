@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tianci-paradigm"
-version = "0.2.0"
+version = "0.3.0"
 description = "天赐范式（TianCi Paradigm）算子流技术特征的可 import 实现：算子契约五件套 / 九步推演协议 / 七器官动态运行时 / 术语锚定表"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -39,6 +39,7 @@ Source = "https://github.com/windsnowmichael/tianci-framework"
 packages = ["tianci", "tianci.data"]
 
 [tool.setuptools.package-data]
+"tianci" = ["py.typed"]
 "tianci.data" = ["registry.json"]
 
 [tool.pytest.ini_options]

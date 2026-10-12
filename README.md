@@ -48,21 +48,51 @@ This package is the concrete fix for **carrier mismatch (AP-1)**, as argued in D
 
 ## Install
 
-```bash
-# From the canonical repository (main branch)
-pip install "git+https://github.com/windsnowmichael/tianci-framework.git@main"
+> **Pin the tag, not the branch.** `@main` moves; a tag does not. Every release is a
+> pinned commit you can verify after install (see Version & self-attestation below).
 
-# Or from a mirror
-pip install "git+https://gitee.com/windsnowmichael/tianci-framework.git@main"
+```bash
+# From the canonical repository (pinned release tag — this is the supported way)
+pip install "git+https://github.com/windsnowmichael/tianci-framework.git@v0.3.0"
+
+# Or from a mirror (same tag)
+pip install "git+https://gitee.com/windsnowmichael/tianci-framework.git@v0.3.0"
 
 # Or: download the wheel from the GitHub Releases page and install it
-pip install tianci_paradigm-0.2.0-py3-none-any.whl
+pip install tianci_paradigm-0.3.0-py3-none-any.whl
 
 # Or: use the source tree directly, no install needed
-cd tianci-paradigm && python -c "import tianci; print(tianci.__version__)"
+cd tianci-paradigm && python -c "import tianci; print(tianci.__version__, tianci.__commit__)"
 ```
 
 > Not published on PyPI yet — `pip install tianci-paradigm` does **not** work today.
+> `__commit__` is `None` in a plain source tree and is injected by
+> `scripts/build_wheel.py` when a wheel is built (see next section).
+
+## Version & self-attestation
+
+"What exactly did I install?" must be verifiable, not guessable. Since v0.3.0:
+
+```python
+import tianci
+tianci.__version__        # "0.3.0"              — package version (single source of truth)
+tianci.__spec_version__   # "v7.0"               — spec version this package tracks
+tianci.__article_version__# "v3.3.x"             — article lineage mapped (see known-gaps.md)
+tianci.__commit__         # 40-hex git commit    — injected at build time, None on source tree
+```
+
+- `__commit__` is injected **only by `scripts/build_wheel.py` when it builds the
+  release wheel** (from `git rev-parse HEAD`), so a wheel always tells you the exact
+  commit it came from: `tianci.__commit__` **equals the commit the tag points to** —
+  "did I get v0.3.0?" becomes a byte-for-byte check, not a version-number guess.
+- A plain source install (`git+https://...@v0.3.0` or using the source tree directly)
+  has **no** `_build_info.py` (it is generated at wheel-build time and gitignored), so
+  `tianci.__commit__` is `None` there. Commit-level self-attestation requires the
+  release wheel.
+- The build script refuses to run on a dirty working tree: the wheel must match the tag,
+  or it does not get built at all.
+- Release tags are the only supported install hooks. Branch pins (`@main`) are not
+  supported for reproducibility.
 
 ## Quick start
 
@@ -122,13 +152,27 @@ tianci-paradigm/
 │   ├── cp.py            # Day 92/93 TDP-CP six-step inference (v0.2)
 │   ├── drr.py           # Day 94 DRR-R rupture-segment redirection (v0.2)
 │   └── consciousness.py # Day 141 self-reference + triple gate (v0.2)
+│   ├── py.typed         # PEP 561 marker: type info ships with the wheel (v0.3)
+│   └── _build_info.py   # build-time only: __commit__ injection (generated, gitignored)
 ├── specs/               # technical signature / lineage / anti-patterns / handbooks (Chinese)
 ├── examples/            # minimal + cross-domain examples
 ├── tests/test_coldstart.py  # T1 cold-start test (AP-4 evidence)
+├── tests/test_contract.py   # six-item contract suite (v0.3: version / lookup / fuse /
+│                           #   cross-process load / seven keys / no norm-conv)
+├── scripts/check_consistency.py  # pre-push cross-check (E1–E12)
+├── scripts/build_wheel.py        # wheel build with __commit__ injection (v0.3)
+├── .github/workflows/release.yml # CI: push tag → test → build → publish (v0.3)
 ├── known-gaps.md        # contract gaps and coverage wording (19.5%)
-├── CHANGELOG.md         # version history (v0.1.0 → v0.2.0)
+├── CHANGELOG.md         # version history (v0.1.0 → v0.3.0)
 └── pyproject.toml
 ```
+
+> **Distribution boundary** (v0.3): the wheel contains `tianci/` (code),
+> `tianci/data/registry.json` and `tianci/py.typed`. The `specs/` and `examples/`
+> directories are Markdown and sample scripts — **they are not in the wheel**. They
+> ship with the source repository only (GitHub / mirrors). If you need them after a
+> pip install, get the source tree; this keeps the wheel small and leaves docs to the
+> repo. This is a documented decision, not an omission.
 
 ## Openness and module maturity
 
@@ -146,6 +190,16 @@ Every module is open. Maturity is labelled; no access gate is set.
 > This package makes **no claim that consciousness or life has been realised**. It offers a
 > **mechanism that can keep being pushed**.
 
+**What you may rely on (v0.3)**: `tianci.__all__` is the stable public API contract —
+names in `__all__` are meant for external use and follow semver; anything else is
+internal. L1/L2 modules are `stable` (semantics frozen, safe to depend on). L3 modules
+are `experimental` — callable today, but their semantics may still evolve; treat them as
+borrowable mechanisms, not as frozen contracts. `route()` keeps its five-argument
+signature; `f3` (observation noise → ζ-EKF) and `f4` (real-time correction → Ψ) are now
+wired into the branch logic instead of being ignored placeholders (Day 102 §6.1/§6.3).
+`route()` accepts truthy values for the boolean flags (duck-typing, documented in the
+docstring) — no hard type assertion is performed.
+
 ## Documentation (Chinese)
 
 - [`specs/operator-stream.md`](specs/operator-stream.md) — operator-stream technical signature
@@ -160,12 +214,22 @@ Every module is open. Maturity is labelled; no access gate is set.
 ## Tests
 
 ```bash
+# Six-item contract suite (v0.3, "callable" → "dependable"):
+#   version / lookup_term / existence_fuse / cross-process save-load /
+#   seven keys (WarmStartPack) / no norm-conv in saved genome
+python -m pytest tests/ -q
+
 # T1 cold-start test: simulates an unfamiliar agent calling the package unaided
 python tests/test_coldstart.py
 
-# Pre-push cross-check: version / coverage wording / bilingual terms consistent throughout
+# Pre-push cross-check: version / coverage wording / bilingual terms / E1–E12 acceptance
 python scripts/check_consistency.py
 ```
+
+CI (`.github/workflows/release.yml`) runs all three on every `v*` tag push, builds the
+wheel (injecting `__commit__`), checks the tag↔wheel commit alignment, installs the
+wheel in a clean virtualenv, and only then publishes. The "manually uploaded a wheel"
+path that caused drift is gone.
 
 Pass criterion: finished independently and reproducibly. Fail criterion: asking "what does
 this mean", guessing, or copying the example back as the answer. See AP-4 in
@@ -180,7 +244,8 @@ this mean", guessing, or copying the example back as the answer. See AP-4 in
 - No platform login state, no scraping, no fabricated data. This package implements the
   technical signature; it does not act on your behalf on any platform.
 - Version, coverage, terminology and acceptance wording are verified by
-  `scripts/check_consistency.py` (including the 11 E-section checks and cross-process revival).
+  `scripts/check_consistency.py` (including the **12 E-section checks** E1–E12:
+  acceptance items, cross-process revival, and f3/f4 semantic backfill verdicts).
 
 ## License
 
